@@ -10,7 +10,7 @@ import { GradeService } from './services/grade.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  
+
   //Properties
   students:Student[] = [];
   studentSelectList:Student[]=[];
@@ -30,7 +30,7 @@ export class AppComponent implements OnInit {
   }
 
   /**
-   * First load all grades, 
+   * First load all grades,
    * then load all students,
    * then set for each student the worst/best/final grade,
    * finally save a SelectList which is always ordered by lastname
@@ -54,7 +54,7 @@ export class AppComponent implements OnInit {
             student.finalGrade = 0;
           }
         });
-        this.studentSelectList = this.studentSelectList.concat(this.students);
+        this.studentSelectList =this.students.concat([]);
         this.studentSelectList.sort((a,b)=>a.lastname.localeCompare(b.lastname));
         this.studentGrade.student_id = this.studentSelectList[0].id;
       });
@@ -62,7 +62,7 @@ export class AppComponent implements OnInit {
   }
 
   isInvalidGrade(){
-    return this.studentGrade.grade < 1 || this.studentGrade.grade > 5;
+    return (this.studentGrade.grade < 1 || this.studentGrade.grade > 5) || !Number.isInteger(this.studentGrade.grade);
   }
 
   /**
@@ -71,6 +71,7 @@ export class AppComponent implements OnInit {
   addGrade(){
     this.gradeService.addGrade(this.studentGrade).subscribe((grade)=>{
       this.studentGrade = {student_id:this.studentSelectList[0].id,grade:0};
+      this.sortingProperty = '';
       this.loadStudentsWithGrades();
       this.gradeAdded = true;
     });
@@ -82,8 +83,8 @@ export class AppComponent implements OnInit {
 
   /**
    * Checks if the name of the given student matches with the filterName
-   * @param student 
-   * @returns 
+   * @param student
+   * @returns
    */
   containsFilterName(student:Student){
     if(this.filterName.trim()==''){
@@ -101,9 +102,9 @@ export class AppComponent implements OnInit {
     }
   }
   /**
-   * Changes background colors for the grade buttons by ngStyle 
-   * @param grade 
-   * @returns 
+   * Changes background colors for the grade buttons by ngStyle
+   * @param grade
+   * @returns
    */
   isSelectedGrade(grade:number){
     return this.selectedGrades.includes(grade);
@@ -116,7 +117,7 @@ export class AppComponent implements OnInit {
     if(this.selectedGrades.includes(grade)){
         return true;
     }
-    return false;   
+    return false;
   }
 
   selectPositiveGrades(){
@@ -192,8 +193,10 @@ export class AppComponent implements OnInit {
         this.sortByName(true);
       }else if(this.sortingProperty == 'final'){
         this.sortByFinalGrade(true);
-      }else{
+      }else if(this.sortingProperty == 'age'){
         this.sortByAge(true);
+      }else{
+
       }
   }
 
@@ -226,7 +229,7 @@ export class AppComponent implements OnInit {
   }
 
 
-  
+
 
 
 
